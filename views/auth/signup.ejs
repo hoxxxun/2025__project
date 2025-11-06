@@ -1,0 +1,122 @@
+<%- include('../layout/header') %>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1>회원가입</h1>
+      <p>새로운 계정을 만들어보세요</p>
+    </div>
+
+    <% if (locals.error) { %>
+      <div class="alert alert-danger">
+        <%= error %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/auth/signup">
+      <div class="form-group">
+        <label for="username" class="form-label">사용자명</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          class="form-control" 
+          placeholder="사용자명을 입력하세요"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">이메일</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          class="form-control" 
+          placeholder="이메일을 입력하세요"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">비밀번호</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          class="form-control" 
+          placeholder="비밀번호를 입력하세요 (최소 6자)"
+          minlength="6"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword" class="form-label">비밀번호 확인</label>
+        <input 
+          type="password" 
+          id="confirmPassword" 
+          name="confirmPassword" 
+          class="form-control" 
+          placeholder="비밀번호를 다시 입력하세요"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">성별</label>
+        <div class="gender-selector">
+          <label class="gender-option">
+            <input type="radio" name="gender" value="M" required>
+            <span class="gender-label">남자</span>
+          </label>
+          <label class="gender-option">
+            <input type="radio" name="gender" value="F" required>
+            <span class="gender-label">여자</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">생년월일</label>
+        <div class="birthdate-inputs">
+          <input 
+            type="number" 
+            name="birthYear" 
+            placeholder="년(YYYY)"
+            min="1900"
+            max="2024"
+            required
+          >
+          <input 
+            type="number" 
+            name="birthMonth" 
+            placeholder="월(MM)"
+            min="1"
+            max="12"
+            required
+          >
+          <input 
+            type="number" 
+            name="birthDay" 
+            placeholder="일(DD)"
+            min="1"
+            max="31"
+            required
+          >
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">
+        회원가입
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      이미 계정이 있으신가요? <a href="/auth/login">로그인하기</a>
+    </div>
+  </div>
+</div>
+
+<%- include('../layout/footer') %>
+

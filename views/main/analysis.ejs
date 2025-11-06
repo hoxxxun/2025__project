@@ -1,0 +1,437 @@
+<%- include('../layout/header') %>
+
+<div class="container mt-5">
+  <div class="analysis-container">
+    <h1 class="analysis-title">개인 성향 분석</h1>
+    <p class="analysis-subtitle">당신의 생년월일을 입력하면 개인 성향을 분석해드립니다</p>
+
+    <form id="analysisForm" class="analysis-form">
+      <div class="form-group">
+        <label for="gender" class="form-label">성별</label>
+        <select id="gender" name="gender" class="form-control" required>
+          <option value="">선택하세요</option>
+          <option value="M">남자</option>
+          <option value="F">여자</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="year" class="form-label">생년 (년)</label>
+        <input 
+          type="number" 
+          id="year" 
+          name="year" 
+          class="form-control" 
+          placeholder="예: 2001"
+          min="1900"
+          max="2099"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="month" class="form-label">월</label>
+        <input 
+          type="number" 
+          id="month" 
+          name="month" 
+          class="form-control" 
+          placeholder="예: 3"
+          min="1"
+          max="12"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="day" class="form-label">일</label>
+        <input 
+          type="number" 
+          id="day" 
+          name="day" 
+          class="form-control" 
+          placeholder="예: 2"
+          min="1"
+          max="31"
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block analysis-btn" id="submitBtn">
+        <i class="fas fa-magic"></i> 분석하기
+      </button>
+    </form>
+
+    <!-- 이전 분석 결과 표시 (로그인한 경우) -->
+    <% if (user && user.traits) { %>
+      <div class="result-container">
+        <div class="result-card">
+          <h2 class="result-title">📊 이전 분석 결과</h2>
+          <div id="previousTraits" class="traits-list">
+            <% const prevTraits = JSON.parse(user.traits); %>
+            <% prevTraits.forEach(trait => { %>
+              <div class="trait-item"><%= trait %></div>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- 새로운 분석 결과 표시 -->
+    <div id="resultContainer" class="result-container" style="display: none;">
+      <div class="result-card">
+        <h2 class="result-title">✨ 분석 결과</h2>
+        <div id="traitsList" class="traits-list">
+          <!-- 결과가 여기에 표시됩니다 -->
+        </div>
+      </div>
+    </div>
+
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">분석 중...</span>
+      </div>
+      <p class="loading-text">분석 중입니다. 잠시만 기다려주세요...</p>
+    </div>
+
+    <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+  </div>
+</div>
+
+<style>
+.analysis-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.analysis-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.analysis-subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.analysis-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.1);
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.analysis-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, var(--primary-color), #4c51bf);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.analysis-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+}
+
+.analysis-btn:active {
+  transform: translateY(0);
+}
+
+.result-container {
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.1);
+  border-left: 4px solid var(--primary-color);
+}
+
+.result-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.traits-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.trait-item {
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(79, 172, 254, 0.1));
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 0.5rem;
+  text-align: center;
+  font-weight: 600;
+  color: #333;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.trait-item:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 172, 254, 0.2));
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 2rem;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 1rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.alert-danger {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+}
+</style>
+
+<script>
+let isSubmitting = false;
+
+document.getElementById('analysisForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  // 이미 요청 중이면 무시
+  if (isSubmitting) {
+    console.log('이미 요청 중입니다.');
+    return;
+  }
+
+  const gender = document.getElementById('gender').value;
+  const year = document.getElementById('year').value;
+  const month = document.getElementById('month').value;
+  const day = document.getElementById('day').value;
+
+  if (!gender || !year || !month || !day) {
+    showError('모든 필드를 입력해주세요.');
+    return;
+  }
+
+  // 로딩 표시
+  isSubmitting = true;
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = '분석 중...';
+  showLoading(true);
+  hideError();
+  hideResults();
+
+  try {
+    // 타임아웃 설정 (15초)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+    const response = await fetch('/analysis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gender, year, month, day }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    const data = await response.json();
+
+    console.log('=== 서버 응답 받음 ===');
+    console.log('전체 응답:', data);
+    console.log('success:', data.success);
+    console.log('traits:', data.traits);
+    console.log('message:', data.message);
+
+    if (!data.success) {
+      throw new Error(data.message || '분석 실패');
+    }
+
+    // traits가 배열인지 확인
+    let traitsArray = data.traits;
+    console.log('traitsArray:', traitsArray);
+    console.log('traitsArray 타입:', typeof traitsArray);
+    console.log('traitsArray 배열 여부:', Array.isArray(traitsArray));
+    
+    if (!traitsArray || !Array.isArray(traitsArray) || traitsArray.length === 0) {
+      throw new Error('성향 데이터가 없습니다');
+    }
+
+    console.log('✓ 검증 완료, showResults 호출');
+    showResults(traitsArray);
+  } catch (error) {
+    console.error('오류:', error);
+    
+    if (error.name === 'AbortError') {
+      showError('요청 시간 초과되었습니다. 잠시 후 다시 시도해주세요.');
+    } else {
+      showError(error.message || '서버 요청 중 오류가 발생했습니다.');
+    }
+  } finally {
+    showLoading(false);
+    isSubmitting = false;
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fas fa-magic"></i> 분석하기';
+  }
+});
+
+function showResults(traits) {
+  console.log('=== showResults 호출 시작 ===');
+  console.log('전달받은 traits:', traits);
+  
+  try {
+    const resultContainer = document.getElementById('resultContainer');
+    const traitsList = document.getElementById('traitsList');
+    
+    console.log('DOM 요소 확인:');
+    console.log('- resultContainer 존재:', !!resultContainer);
+    console.log('- traitsList 존재:', !!traitsList);
+    
+    if (!resultContainer || !traitsList) {
+      console.error('❌ DOM 요소를 찾을 수 없습니다!');
+      return;
+    }
+    
+    // HTML 생성
+    let html = '';
+    if (Array.isArray(traits) && traits.length > 0) {
+      console.log('✓ 배열 확인됨, 개수:', traits.length);
+      html = traits
+        .map((trait, index) => {
+          const text = String(trait).trim();
+          console.log(`- 성향[${index}]: ${text}`);
+          return `<div class="trait-item">${text}</div>`;
+        })
+        .join('');
+    } else {
+      console.log('⚠️ traits가 유효한 배열이 아님');
+      html = '<p>분석 결과가 없습니다.</p>';
+    }
+    
+    console.log('생성된 HTML:', html);
+    
+    // DOM 업데이트
+    traitsList.innerHTML = html;
+    console.log('✓ innerHTML 설정 완료');
+    
+    // 표시
+    resultContainer.style.display = 'block';
+    console.log('✓ 결과 컨테이너 표시됨');
+    console.log('=== showResults 완료 ===');
+  } catch (err) {
+    console.error('❌ showResults 에러:', err);
+  }
+}
+
+function showLoading(show) {
+  document.getElementById('loadingSpinner').style.display = show ? 'block' : 'none';
+}
+
+function showError(message) {
+  const errorDiv = document.getElementById('errorMessage');
+  errorDiv.textContent = message;
+  errorDiv.style.display = 'block';
+}
+
+function hideError() {
+  document.getElementById('errorMessage').style.display = 'none';
+}
+
+function hideResults() {
+  document.getElementById('resultContainer').style.display = 'none';
+}
+</script>
+
+<%- include('../layout/footer') %>
+

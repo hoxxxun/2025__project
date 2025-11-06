@@ -1,0 +1,81 @@
+<%- include('../layout/header') %>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+  <h2 style="font-size: 2rem;">📰 커뮤니티</h2>
+  <% if (locals.user) { %>
+    <a href="/community/write" class="btn btn-primary">
+      ✍️ 글쓰기
+    </a>
+  <% } %>
+</div>
+
+<% if (locals.error) { %>
+  <div class="alert alert-danger">
+    <%= error %>
+  </div>
+<% } %>
+
+<% if (locals.success) { %>
+  <div class="alert alert-success">
+    <%= success %>
+  </div>
+<% } %>
+
+<% if (posts && posts.length > 0) { %>
+  <div class="posts-grid">
+    <% posts.forEach(post => { %>
+      <a href="/community/<%= post.id %>" style="text-decoration: none;">
+        <div class="post-card">
+          <div class="post-header">
+            <h3 class="post-title"><%= post.title %></h3>
+            <div class="post-meta">
+              <div class="post-author">
+                👤 <%= post.User?.username || '알 수 없음' %>
+              </div>
+              <div>📅 <%= post.createdAt?.toLocaleDateString('ko-KR') || '' %></div>
+            </div>
+          </div>
+          
+          <div class="post-body">
+            <%= post.content %>
+          </div>
+          
+          <div class="post-footer">
+            <div class="post-stats">
+              <div class="post-stat">
+                👁️ <%= post.views || 0 %>회
+              </div>
+              <div class="post-stat">
+                💬 <%= post.comments?.length || 0 %>개
+              </div>
+            </div>
+            <span style="color: var(--primary-color); font-weight: 600;">보기 →</span>
+          </div>
+        </div>
+      </a>
+    <% }); %>
+  </div>
+<% } else { %>
+  <div class="empty-state">
+    <div class="empty-state-icon">📭</div>
+    <div class="empty-state-title">게시글이 없습니다</div>
+    <div class="empty-state-text">
+      <% if (locals.user) { %>
+        첫 번째 게시글을 작성해보세요!
+      <% } else { %>
+        로그인 후 게시글을 확인해보세요.
+      <% } %>
+    </div>
+    <% if (locals.user) { %>
+      <a href="/community/write" class="btn btn-primary">
+        첫 글 작성하기
+      </a>
+    <% } else { %>
+      <a href="/auth/login" class="btn btn-primary">
+        로그인하기
+      </a>
+    <% } %>
+  </div>
+<% } %>
+
+<%- include('../layout/footer') %>

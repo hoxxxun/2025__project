@@ -1,0 +1,115 @@
+<%- include('../layout/header') %>
+
+<% if (locals.error) { %>
+  <div class="alert alert-danger">
+    <%= error %>
+  </div>
+<% } %>
+
+<% if (locals.success) { %>
+  <div class="alert alert-success">
+    <%= success %>
+  </div>
+<% } %>
+
+<div class="card" style="max-width: 800px; margin: 2rem auto;">
+  <div class="card-header">
+    <h2><%= post.title %></h2>
+    <div class="post-meta" style="margin-top: 1rem;">
+      <div>👤 <%= post.User?.username || '알 수 없음' %></div>
+      <div>📅 <%= post.createdAt?.toLocaleDateString('ko-KR') %></div>
+      <div>👁️ <%= post.views || 0 %>회</div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div style="line-height: 1.8; color: var(--text-primary); white-space: pre-wrap; word-break: break-word;">
+      <%= post.content %>
+    </div>
+  </div>
+
+  <% if (locals.user && user.id === post.userId) { %>
+    <div style="padding: 1.5rem; background-color: var(--light-bg); border-top: 1px solid var(--border-color); display: flex; gap: 1rem;">
+      <a href="/community/edit/<%= post.id %>" class="btn btn-primary">
+        수정
+      </a>
+      <form method="POST" action="/community/delete/<%= post.id %>" style="display: inline;">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('정말 삭제하시겠습니까?');">
+          삭제
+        </button>
+      </form>
+    </div>
+  <% } %>
+</div>
+
+<!-- 댓글 섹션 -->
+<div class="card" style="max-width: 800px; margin: 2rem auto;">
+  <div class="card-header">
+    <h3>💬 댓글 (<%= post.comments?.length || 0 %>)</h3>
+  </div>
+
+  <% if (locals.user) { %>
+    <form method="POST" action="/community/comment" style="padding: 2rem; border-bottom: 1px solid var(--border-color);">
+      <input type="hidden" name="postId" value="<%= post.id %>">
+      <div class="form-group">
+        <label for="comment" class="form-label">댓글 작성</label>
+        <textarea 
+          id="comment" 
+          name="content" 
+          class="form-control" 
+          placeholder="댓글을 입력하세요"
+          rows="3"
+          required
+        ></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        댓글 작성
+      </button>
+    </form>
+  <% } else { %>
+    <div style="padding: 2rem; text-align: center; background-color: var(--light-bg); color: var(--text-secondary);">
+      <p>댓글을 작성하려면 <a href="/auth/login" style="color: var(--primary-color); font-weight: 600;">로그인</a>해주세요.</p>
+    </div>
+  <% } %>
+
+  <% if (post.comments && post.comments.length > 0) { %>
+    <div style="padding: 2rem;">
+      <% post.comments.forEach(comment => { %>
+        <div style="margin-bottom: 1.5rem; padding: 1.5rem; background-color: var(--light-bg); border-radius: 0.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+            <div>
+              <strong style="color: var(--primary-color);">
+                <%= comment.User?.username || '알 수 없음' %>
+              </strong>
+              <span style="color: var(--text-secondary); font-size: 0.875rem;">
+                · <%= comment.createdAt?.toLocaleDateString('ko-KR') %>
+              </span>
+            </div>
+            <% if (locals.user && user.id === comment.userId) { %>
+              <form method="POST" action="/community/comment/<%= comment.id %>/delete" style="display: inline;">
+                <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.75rem; font-size: 0.85rem;" onclick="return confirm('댓글을 삭제하시겠습니까?');">
+                  삭제
+                </button>
+              </form>
+            <% } %>
+          </div>
+          <div style="color: var(--text-primary); line-height: 1.6; white-space: pre-wrap; word-break: break-word;">
+            <%= comment.content %>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div style="padding: 2rem; text-align: center; color: var(--text-secondary);">
+      첫 번째 댓글을 작성해보세요!
+    </div>
+  <% } %>
+</div>
+
+<div style="text-align: center; margin: 2rem 0;">
+  <a href="/community/list" class="btn btn-outline">
+    목록으로 돌아가기
+  </a>
+</div>
+
+<%- include('../layout/footer') %>

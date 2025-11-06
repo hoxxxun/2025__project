@@ -1,0 +1,56 @@
+<%- include('../layout/header') %>
+
+<div class="container">
+  <div class="preference-container">
+    <h2>성향 보기</h2>
+    
+    <div class="birth-form-container">
+      <form action="/matching/register-saju" method="POST" class="birth-form">
+        <h3>버튼</h3>
+        <p class="form-description">버튼 클릭시 자신의 성향 내용 표시</p>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="birthYear">년도</label>
+            <input type="number" id="birthYear" name="birthYear" 
+                   value="<%= user.birthYear || '' %>" 
+                   placeholder="예: 1995" min="1900" max="2025" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="birthMonth">월</label>
+            <input type="number" id="birthMonth" name="birthMonth" 
+                   value="<%= user.birthMonth || '' %>" 
+                   placeholder="1-12" min="1" max="12" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="birthDay">일</label>
+            <input type="number" id="birthDay" name="birthDay" 
+                   value="<%= user.birthDay || '' %>" 
+                   placeholder="1-31" min="1" max="31" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="gender">성별</label>
+          <select id="gender" name="gender" required>
+            <option value="">선택하세요</option>
+            <option value="male" <%= user.gender === 'male' ? 'selected' : '' %>>남성</option>
+            <option value="female" <%= user.gender === 'female' ? 'selected' : '' %>>여성</option>
+            <option value="other" <%= user.gender === 'other' ? 'selected' : '' %>>기타</option>
+          </select>
+        </div>
+        
+        <% if (message) { %>
+          <div class="message"><%= message %></div>
+        <% } %>
+        
+        <button type="submit" class="btn btn-primary">저장하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../layout/footer') %>
+

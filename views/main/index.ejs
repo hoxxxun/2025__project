@@ -1,0 +1,144 @@
+<%- include('../layout/header') %>
+
+<% if (locals.user) { %>
+  <!-- 로그인 사용자 홈 -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2>🎉 안녕하세요, <%- user.username %>님!</h2>
+    </div>
+    <div class="card-body">
+      <p>Fortune For You 플랫폼에 오신 것을 환영합니다!</p>
+      <p>아래 기능들을 이용해 다양한 활동을 해보세요.</p>
+    </div>
+  </div>
+
+  <div class="posts-grid">
+    <!-- 커뮤니티 카드 -->
+    <a href="/community/list" style="text-decoration: none;">
+      <div class="card">
+        <div class="card-header" style="text-align: center; border: none;">
+          <h3 style="font-size: 2.5rem; margin-bottom: 0.5rem;">📝</h3>
+          <h3>커뮤니티</h3>
+        </div>
+        <div class="card-body">
+          <p>다른 사용자들과 함께 글을 쓰고 댓글로 소통해보세요.</p>
+        </div>
+        <div class="card-footer" style="background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; padding: 1rem; border-radius: 0 0 0.75rem 0.75rem;">
+          <span>커뮤니티 바로가기 →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 채팅 카드 -->
+    <a href="/chat/list" style="text-decoration: none;">
+      <div class="card">
+        <div class="card-header" style="text-align: center; border: none;">
+          <h3 style="font-size: 2.5rem; margin-bottom: 0.5rem;">💬</h3>
+          <h3>실시간 채팅</h3>
+        </div>
+        <div class="card-body">
+          <p>다른 사용자들과 실시간으로 소통할 수 있습니다.</p>
+        </div>
+        <div class="card-footer" style="background: linear-gradient(135deg, #ec4899, #be185d); color: white; padding: 1rem; border-radius: 0 0 0.75rem 0.75rem;">
+          <span>채팅 바로가기 →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 프로필 카드 -->
+    <div class="card">
+      <div class="card-header" style="text-align: center; border: none;">
+        <h3 style="font-size: 2.5rem; margin-bottom: 0.5rem;">👤</h3>
+        <h3>내 프로필</h3>
+      </div>
+      <div class="card-body">
+        <p><strong>사용자명:</strong> <%- user.username %></p>
+        <p><strong>이메일:</strong> <%- user.email %></p>
+        <% if (user.nickname) { %>
+          <p><strong>닉네임:</strong> <%- user.nickname %></p>
+        <% } %>
+        <% if (user.bio) { %>
+          <p><strong>자기소개:</strong> <%- user.bio %></p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+<% } else { %>
+  <!-- 비로그인 사용자 랜딩 페이지 -->
+  <div style="text-align: center; padding: 4rem 2rem; background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; border-radius: 1rem; margin-bottom: 3rem;">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem;">🌟 Fortune For You</h1>
+    <p style="font-size: 1.25rem; margin-bottom: 2rem;">
+      로그인, 채팅, 커뮤니티를 한 곳에서!
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+      <a href="/auth/signup" class="btn btn-primary" style="background-color: white; color: #6366f1; border: none;">
+        시작하기
+      </a>
+      <a href="/auth/login" class="btn btn-outline" style="border-color: white; color: white;">
+        로그인
+      </a>
+    </div>
+  </div>
+
+  <div class="posts-grid">
+    <!-- 기능 소개 -->
+    <div class="card">
+      <div class="card-header" style="text-align: center; border: none;">
+        <h3 style="font-size: 2.5rem; margin-bottom: 0.5rem;">📝</h3>
+        <h3>커뮤니티</h3>
+      </div>
+      <div class="card-body">
+        <p>다른 사용자들과 함께 글을 쓰고 댓글로 소통해보세요.</p>
+        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+          <li>자유로운 게시글 작성</li>
+          <li>다양한 댓글 토론</li>
+          <li>관심 있는 주제 탐색</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="text-align: center; border: none;">
+        <h3 style="font-size: 2.5rem; margin-bottom: 0.5rem;">💬</h3>
+        <h3>실시간 채팅</h3>
+      </div>
+      <div class="card-body">
+        <p>다른 사용자들과 실시간으로 소통할 수 있습니다.</p>
+        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+          <li>1:1 실시간 채팅</li>
+          <li>메시지 히스토리 저장</li>
+          <li>언제든 소통 가능</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="text-align: center; border: none;">
+        <h3 style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔐</h3>
+        <h3>안전한 인증</h3>
+      </div>
+      <div class="card-body">
+        <p>안전하고 신뢰할 수 있는 사용자 인증 시스템</p>
+        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+          <li>강력한 비밀번호 보호</li>
+          <li>세션 관리</li>
+          <li>개인정보 보호</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 3rem; background-color: var(--light-bg); padding: 2rem; border-radius: 1rem; text-align: center;">
+    <h2 style="margin-bottom: 1rem;">지금 바로 시작해보세요!</h2>
+    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+      가입하고 Fortune For You의 모든 기능을 이용해보세요.
+    </p>
+    <a href="/auth/signup" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">
+      무료 회원가입
+    </a>
+  </div>
+
+<% } %>
+
+<%- include('../layout/footer') %>

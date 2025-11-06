@@ -1,0 +1,39 @@
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>📱 Fortune For You</h3>
+        <p>로그인, 채팅, 커뮤니티를 한 곳에서!</p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>👥 커뮤니티</h3>
+        <a href="/community/list">게시글 보기</a>
+        <a href="/community/write">글쓰기</a>
+      </div>
+      
+      <div class="footer-section">
+        <h3>💬 채팅</h3>
+        <a href="/chat/list">채팅 시작</a>
+      </div>
+      
+      <div class="footer-section">
+        <h3>계정</h3>
+        <% if (locals.user) { %>
+          <a href="/auth/logout">로그아웃</a>
+        <% } else { %>
+          <a href="/auth/login">로그인</a>
+          <a href="/auth/signup">회원가입</a>
+        <% } %>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2025 Fortune For You. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입 - Fortune For You</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-box">
+      <h1 class="auth-title">Fortune For You 회원가입</h1>
+      
+      <form action="/auth/register" method="POST" class="auth-form">
+        <div class="form-group">
+          <label for="username">사용자명</label>
+          <input type="text" id="username" name="username" placeholder="사용자명" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">이메일</label>
+          <input type="email" id="email" name="email" placeholder="이메일" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">비밀번호</label>
+          <input type="password" id="password" name="password" placeholder="비밀번호" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="passwordConfirm">비밀번호 확인</label>
+          <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="비밀번호 확인" required>
+        </div>
+        
+        <% if (error) { %>
+          <div class="error-message"><%= error %></div>
+        <% } %>
+        
+        <button type="submit" class="btn btn-primary">가입하기</button>
+      </form>
+      
+      <p class="auth-link">
+        이미 계정이 있으신가요? <a href="/auth/login">로그인</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+
