@@ -18,6 +18,7 @@ const Post = require('./models/Post');
 const Comment = require('./models/Comment');
 const ChatRoom = require('./models/ChatRoom');
 const Message = require('./models/Message');
+const Compatibility = require('./models/Compatibility');
 
 // 모델 관계 설정
 Comment.belongsTo(User, { foreignKey: 'userId', as: 'author' });
@@ -35,16 +36,16 @@ User.hasMany(ChatRoom, { foreignKey: 'user2Id', as: 'receivedChats' });
 Message.belongsTo(ChatRoom, { foreignKey: 'chatroomId' });
 ChatRoom.hasMany(Message, { foreignKey: 'chatroomId' });
 
-// Message와 User 관계 설정
-Message.belongsTo(User, { foreignKey: 'userId', as: 'sender' });
-User.hasMany(Message, { foreignKey: 'userId' });
+// Message 관계는 모델 파일에서 직접 설정됨
+
+// Compatibility 관계는 모델 파일에서 직접 설정됨
 
 // MySQL 연결 테스트
 sequelize.authenticate()
   .then(() => {
     console.log('MySQL 연결 성공');
     // 테이블 자동 생성 (개발 환경에서만)
-    return sequelize.sync({ force: process.env.NODE_ENV === 'development', alter: false });
+    return sequelize.sync({ force: false, alter: process.env.NODE_ENV === 'development' });
   })
   .then(() => console.log('데이터베이스 동기화 완료'))
   .catch(err => console.error('MySQL 연결 실패:', err));
@@ -96,12 +97,14 @@ const authRoutes = require('./routes/auth');
 const mainRoutes = require('./routes/main');
 const communityRoutes = require('./routes/community');
 const chatRoutes = require('./routes/chat');
+const matchingRoutes = require('./routes/matching');
 
 // 라우트 사용
 app.use('/auth', authRoutes);
 app.use('/', mainRoutes);
 app.use('/community', communityRoutes);
 app.use('/chat', chatRoutes);
+app.use('/matching', matchingRoutes);
 
 // Socket.io 연결 처리
 

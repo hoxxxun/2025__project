@@ -37,5 +37,9 @@ const ChatRoom = sequelize.define('ChatRoom', {
   timestamps: true
 });
 
+// 관계 설정
+ChatRoom.belongsTo(User, { foreignKey: 'user1Id', as: 'chatUser1' });
+ChatRoom.belongsTo(User, { foreignKey: 'user2Id', as: 'chatUser2' });
+
 module.exports = ChatRoom;
 

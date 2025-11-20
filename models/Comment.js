@@ -32,4 +32,11 @@ const Comment = sequelize.define('Comment', {
   timestamps: true
 });
 
+// 관계 설정
+const User = require('./User');
+const Post = require('./Post');
+
+Comment.belongsTo(User, { foreignKey: 'userId', as: 'commentAuthor' });
+Comment.belongsTo(Post, { foreignKey: 'postId', as: 'relatedPost' });
+
 module.exports = Comment;

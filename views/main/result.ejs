@@ -1,0 +1,177 @@
+<%- include('../layout/header') %>
+
+<div class="container mt-5">
+  <div class="result-page">
+    <h1 class="result-title">✨ 성향 분석 결과</h1>
+
+    <% if (traits && traits.length > 0) { %>
+      <div class="result-card">
+        <h2 class="result-subtitle">당신의 성향 분석 결과</h2>
+        <div class="traits-grid">
+          <% traits.forEach(trait => { %>
+            <div class="trait-item">
+              <%= trait %>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+
+      <div class="actions mt-4">
+        <a href="/analysis" class="btn btn-primary">
+          <i class="fas fa-redo"></i> 다시 분석하기
+        </a>
+        <a href="/" class="btn btn-secondary">
+          <i class="fas fa-home"></i> 홈으로
+        </a>
+      </div>
+    <% } else { %>
+      <div class="error-card">
+        <h2 class="error-title">⚠️ 분석 실패</h2>
+        <p>성향 분석 결과를 불러올 수 없습니다.</p>
+        <a href="/analysis" class="btn btn-primary">
+          <i class="fas fa-redo"></i> 다시 시도
+        </a>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<style>
+.result-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.result-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+}
+
+.result-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+  margin-bottom: 2rem;
+}
+
+.result-subtitle {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.traits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.trait-item {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(79, 172, 254, 0.1));
+  border: 2px solid rgba(99, 102, 241, 0.3);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  transition: all 0.3s ease;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trait-item:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 172, 254, 0.2));
+  border-color: var(--primary-color);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+}
+
+.actions {
+  text-align: center;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  margin: 0 0.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), #4c51bf);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+.error-card {
+  background: #fee;
+  border: 2px solid #fcc;
+  border-radius: 1rem;
+  padding: 3rem;
+  text-align: center;
+  color: #c33;
+}
+
+.error-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .result-page {
+    padding: 1rem;
+  }
+
+  .result-title {
+    font-size: 2rem;
+  }
+
+  .traits-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .trait-item {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+
+  .btn {
+    display: block;
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+}
+</style>
+
+<%- include('../layout/footer') %>

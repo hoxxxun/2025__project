@@ -38,5 +38,9 @@ const Message = sequelize.define('Message', {
   timestamps: true
 });
 
+// 관계 설정
+Message.belongsTo(User, { foreignKey: 'userId', as: 'messageSender' });
+Message.belongsTo(ChatRoom, { foreignKey: 'chatroomId', as: 'messageChatroom' });
+
 module.exports = Message;
 

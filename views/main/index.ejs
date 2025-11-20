@@ -8,9 +8,74 @@
     </div>
     <div class="card-body">
       <p>Fortune For You 플랫폼에 오신 것을 환영합니다!</p>
-      <p>아래 기능들을 이용해 다양한 활동을 해보세요.</p>
+      <% if (recommendations && recommendations.length > 0) { %>
+        <p>귀하의 성향을 분석하여 궁합이 잘 맞는 추천 상대들을 소개합니다!</p>
+      <% } else { %>
+        <p>더 많은 사용자가 가입하면 맞춤 추천을 받으실 수 있습니다.</p>
+      <% } %>
     </div>
   </div>
+
+  <% if (recommendations && recommendations.length > 0) { %>
+    <!-- 추천 상대 목록 -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h2>💕 추천 상대 (궁합 순위)</h2>
+        <p style="margin: 0.5rem 0 0 0; color: var(--text-secondary); font-size: 0.9rem;">
+          귀하의 성향과 가장 잘 맞는 상위 3명의 사용자입니다.
+        </p>
+      </div>
+      <div class="recommendations-grid">
+        <% recommendations.forEach((rec, index) => { %>
+          <div class="recommendation-card">
+            <div class="recommendation-header">
+              <div class="rank-badge">#<%= index + 1 %></div>
+              <div class="score-display">
+                <span class="score"><%= Math.round(rec.matchingScore) %></span>
+                <span class="score-label">점</span>
+              </div>
+            </div>
+
+            <div class="recommendation-body">
+              <h4><%= rec.username %></h4>
+              <div class="user-info">
+                <span class="age"><%= rec.age %>세</span>
+                <span class="gender"><%= rec.gender === 'M' || rec.gender === 'male' ? '남성' : '여성' %></span>
+              </div>
+
+              <% if (rec.traits && rec.traits.length > 0) { %>
+                <div class="traits-section">
+                  <div class="traits-list">
+                    <% rec.traits.slice(0, 3).forEach(trait => { %>
+                      <span class="trait-tag"><%= trait %></span>
+                    <% }); %>
+                    <% if (rec.traits.length > 3) { %>
+                      <span class="trait-more">+<%= rec.traits.length - 3 %></span>
+                    <% } %>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+
+            <div class="recommendation-footer">
+              <a href="/matching/compatibility?user=<%= rec.id %>" class="btn btn-primary btn-sm">
+                궁합 상세보기
+              </a>
+              <% if (rec.hasChatRoom) { %>
+                <a href="/chat/room/<%= rec.id %>" class="btn btn-secondary btn-sm">
+                  채팅하기
+                </a>
+              <% } else { %>
+                <button type="button" class="btn btn-secondary btn-sm send-auto-message" data-user-id="<%= rec.id %>">
+                  자동메시지 보내기
+                </button>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  <% } %>
 
   <div class="posts-grid">
     <!-- 커뮤니티 카드 -->
@@ -45,23 +110,21 @@
       </div>
     </a>
 
-    <!-- 프로필 카드 -->
-    <div class="card">
-      <div class="card-header" style="text-align: center; border: none;">
-        <h3 style="font-size: 2.5rem; margin-bottom: 0.5rem;">👤</h3>
-        <h3>내 프로필</h3>
+    <!-- 매칭 카드 -->
+    <a href="/matching/list" style="text-decoration: none;">
+      <div class="card">
+        <div class="card-header" style="text-align: center; border: none;">
+          <h3 style="font-size: 2.5rem; margin-bottom: 0.5rem;">💕</h3>
+          <h3>매칭</h3>
+        </div>
+        <div class="card-body">
+          <p>궁합이 맞는 상대를 찾아보세요.</p>
+        </div>
+        <div class="card-footer" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 1rem; border-radius: 0 0 0.75rem 0.75rem;">
+          <span>매칭 바로가기 →</span>
+        </div>
       </div>
-      <div class="card-body">
-        <p><strong>사용자명:</strong> <%- user.username %></p>
-        <p><strong>이메일:</strong> <%- user.email %></p>
-        <% if (user.nickname) { %>
-          <p><strong>닉네임:</strong> <%- user.nickname %></p>
-        <% } %>
-        <% if (user.bio) { %>
-          <p><strong>자기소개:</strong> <%- user.bio %></p>
-        <% } %>
-      </div>
-    </div>
+    </a>
   </div>
 
 <% } else { %>
@@ -140,5 +203,185 @@
   </div>
 
 <% } %>
+
+<!-- 자동 메시지 팝업창 -->
+<div id="autoMessageModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+  <div class="modal-content" style="background-color: white; margin: 15% auto; padding: 0; border: 1px solid #888; width: 90%; max-width: 500px; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <div class="modal-header" style="padding: 1.5rem; border-bottom: 1px solid var(--border-color); background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; border-radius: 1rem 1rem 0 0;">
+      <h3 style="margin: 0; font-size: 1.25rem;">💌 자동 인사 메시지</h3>
+      <span class="close" style="color: white; float: right; font-size: 28px; font-weight: bold; cursor: pointer; margin-top: -5px;">&times;</span>
+    </div>
+    <div class="modal-body" style="padding: 1.5rem;">
+      <p style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
+        추천 상대에게 보낼 자동 인사 메시지입니다. 메시지를 확인하고 전송 여부를 선택해주세요.
+      </p>
+      <div class="message-preview" style="background: #f8f9fa; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid var(--primary-color); margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <strong style="color: var(--text-primary);">메시지 미리보기:</strong>
+          <button id="refreshMessageBtn" class="btn-icon" style="background: none; border: none; cursor: pointer; padding: 0.5rem; border-radius: 0.25rem; font-size: 1.5rem;" title="새 메시지 가져오기">
+            🔄
+          </button>
+        </div>
+        <div id="autoMessageText" style="line-height: 1.5; color: var(--text-primary);">
+          메시지를 불러오는 중...
+        </div>
+      </div>
+      <div class="modal-actions" style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+        <button id="cancelAutoMessageBtn" class="btn btn-outline" style="flex: 1;">
+          취소하기
+        </button>
+        <button id="sendAutoMessageBtn" class="btn btn-primary" style="flex: 1;">
+          보내기
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 자동 메시지 전송 스크립트 -->
+<script>
+  let currentTargetUserId = null;
+
+  // 자동 메시지 보내기 버튼 이벤트
+  document.querySelectorAll('.send-auto-message').forEach(button => {
+    button.addEventListener('click', function() {
+      currentTargetUserId = this.getAttribute('data-user-id');
+      showAutoMessageModal();
+    });
+  });
+
+  // 모달 표시 함수
+  async function showAutoMessageModal() {
+    const modal = document.getElementById('autoMessageModal');
+    const messageText = document.getElementById('autoMessageText');
+
+    // 모달 표시
+    modal.style.display = 'block';
+
+    // 메시지 로딩 표시
+    messageText.textContent = '메시지를 불러오는 중...';
+
+    try {
+      // 자동 메시지 가져오기
+      const response = await fetch('/chat/get-random-auto-message');
+      const data = await response.json();
+
+      if (data.success) {
+        messageText.textContent = data.message;
+      } else {
+        messageText.textContent = '메시지를 불러올 수 없습니다.';
+      }
+    } catch (error) {
+      console.error('자동 메시지 가져오기 오류:', error);
+      messageText.textContent = '메시지를 불러올 수 없습니다.';
+    }
+  }
+
+  // 모달 닫기
+  document.querySelector('.close').addEventListener('click', () => {
+    document.getElementById('autoMessageModal').style.display = 'none';
+  });
+
+  // 모달 외부 클릭 시 닫기
+  window.addEventListener('click', (event) => {
+    const modal = document.getElementById('autoMessageModal');
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  // 새 메시지 가져오기 버튼
+  document.getElementById('refreshMessageBtn').addEventListener('click', async () => {
+    const messageText = document.getElementById('autoMessageText');
+    const button = document.getElementById('refreshMessageBtn');
+
+    // 버튼 회전 애니메이션
+    button.style.transform = 'rotate(360deg)';
+    button.disabled = true;
+
+    messageText.textContent = '새 메시지를 불러오는 중...';
+
+    try {
+      const response = await fetch('/chat/get-random-auto-message');
+      const data = await response.json();
+
+      if (data.success) {
+        messageText.textContent = data.message;
+      } else {
+        messageText.textContent = '메시지를 불러올 수 없습니다.';
+      }
+    } catch (error) {
+      console.error('자동 메시지 가져오기 오류:', error);
+      messageText.textContent = '메시지를 불러올 수 없습니다.';
+    } finally {
+      // 애니메이션 초기화
+      setTimeout(() => {
+        button.style.transform = 'rotate(0deg)';
+        button.disabled = false;
+      }, 300);
+    }
+  });
+
+  // 취소 버튼
+  document.getElementById('cancelAutoMessageBtn').addEventListener('click', () => {
+    document.getElementById('autoMessageModal').style.display = 'none';
+  });
+
+  // 보내기 버튼
+  document.getElementById('sendAutoMessageBtn').addEventListener('click', async () => {
+    if (!currentTargetUserId) return;
+
+    const sendButton = document.getElementById('sendAutoMessageBtn');
+    const cancelButton = document.getElementById('cancelAutoMessageBtn');
+    const refreshButton = document.getElementById('refreshMessageBtn');
+
+    // 버튼들 비활성화
+    sendButton.disabled = true;
+    cancelButton.disabled = true;
+    refreshButton.disabled = true;
+
+    sendButton.textContent = '전송 중...';
+
+    try {
+      // 자동 메시지 전송
+      const response = await fetch('/chat/send-auto-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          targetUserId: currentTargetUserId
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // 모달 닫기
+        document.getElementById('autoMessageModal').style.display = 'none';
+
+        // 채팅방으로 이동
+        window.location.href = `/chat/room/${currentTargetUserId}`;
+      } else {
+        alert('자동 메시지 전송에 실패했습니다: ' + (data.error || '알 수 없는 오류'));
+
+        // 버튼들 다시 활성화
+        sendButton.disabled = false;
+        cancelButton.disabled = false;
+        refreshButton.disabled = false;
+        sendButton.textContent = '보내기';
+      }
+    } catch (error) {
+      console.error('자동 메시지 전송 오류:', error);
+      alert('자동 메시지 전송 중 오류가 발생했습니다.');
+
+      // 버튼들 다시 활성화
+      sendButton.disabled = false;
+      cancelButton.disabled = false;
+      refreshButton.disabled = false;
+        sendButton.textContent = '보내기';
+    }
+  });
+</script>
 
 <%- include('../layout/footer') %>

@@ -39,6 +39,24 @@
           <div style="font-size: 2rem; margin-bottom: 1rem;">💬</div>
           <p>아직 메시지가 없습니다.</p>
           <p style="font-size: 0.875rem;">대화를 시작해보세요!</p>
+          <% if (isNewRoom && randomAutoMessage) { %>
+            <div style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #f8f9ff, #e8f2ff); border: 2px solid var(--primary-light); border-radius: 1rem; max-width: 400px;">
+              <h4 style="color: var(--primary-color); margin: 0 0 1rem 0; font-size: 1.1rem;">💌 자동 인사 메시지</h4>
+              <p style="color: var(--text-secondary); margin: 0 0 1rem 0; font-size: 0.9rem;">상대방에게 먼저 인사하기 어려우시면 이 메시지를 사용해보세요!</p>
+              <div style="background: white; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color); margin-bottom: 1rem; text-align: left;">
+                <strong>제안 메시지:</strong><br>
+                "<%= randomAutoMessage %>"
+              </div>
+              <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                <button type="button" id="useAutoMessageBtn" class="btn btn-primary" style="font-size: 0.9rem;">
+                  이 메시지 사용하기
+                </button>
+                <button type="button" id="skipAutoMessageBtn" class="btn btn-outline" style="font-size: 0.9rem;">
+                  직접 입력하기
+                </button>
+              </div>
+            </div>
+          <% } %>
         </div>
       </div>
     <% } %>
@@ -163,6 +181,40 @@
     // 자동 스크롤
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   });
+
+  // 자동 메시지 버튼 이벤트
+  const useAutoMessageBtn = document.getElementById('useAutoMessageBtn');
+  const skipAutoMessageBtn = document.getElementById('skipAutoMessageBtn');
+
+  if (useAutoMessageBtn && skipAutoMessageBtn) {
+    // "이 메시지 사용하기" 버튼
+    useAutoMessageBtn.addEventListener('click', () => {
+      const autoMessage = '<%= randomAutoMessage %>';
+      socket.emit('send-message', {
+        roomId: roomId,
+        content: autoMessage,
+        userId: userId,
+        username: username
+      });
+
+      // 자동 메시지 섹션 숨기기
+      const autoMessageDiv = document.querySelector('.text-align-center');
+      if (autoMessageDiv) {
+        autoMessageDiv.querySelector('div[style*="background: linear-gradient"]').remove();
+      }
+    });
+
+    // "직접 입력하기" 버튼
+    skipAutoMessageBtn.addEventListener('click', () => {
+      // 자동 메시지 섹션 숨기기
+      const autoMessageDiv = document.querySelector('.text-align-center');
+      if (autoMessageDiv) {
+        autoMessageDiv.querySelector('div[style*="background: linear-gradient"]').remove();
+      }
+      // 메시지 입력창에 포커스
+      document.getElementById('messageInput').focus();
+    });
+  }
 
   // 페이지 로드 시 스크롤 하단으로
   window.addEventListener('load', () => {

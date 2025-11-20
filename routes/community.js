@@ -98,7 +98,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
           as: 'comments',
           include: [{
             model: User,
-            as: 'author',
+            as: 'commentAuthor',
             attributes: ['id', 'username', 'nickname']
           }],
           order: [['createdAt', 'DESC']]
